@@ -14,11 +14,17 @@ for line in strategy_guide:
     for i in rps_round:
         shape_point.append(shape_points[i])
 
-    if shape_point[0] < shape_point[1]:
+    if shape_point[0]==1 and shape_point[1]==3:
+        point_total += round_points['lose'] + shape_point[1]
+    elif shape_point[0]==3 and shape_point[1]==1:
+        point_total += round_points['win'] + shape_point[1]
+    elif shape_point[0] < shape_point[1]:
         point_total += round_points['win'] + shape_point[1]
     elif shape_point[0] > shape_point[1]:
         point_total += round_points['lose'] + shape_point[1]
     else:
         point_total += round_points['draw'] + shape_point[1]
+
+strategy_guide.close()
 
 print(f"Rounds: {round_num} \nPoints: {point_total}")
