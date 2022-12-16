@@ -1,4 +1,4 @@
-with open('input7.txt', 'r') as f:
+with open('example.txt', 'r') as f:
     lines = f.read().splitlines()
 
 tree_level = 0
