@@ -1,50 +1,71 @@
-with open('example.txt', 'r') as f:
+with open('input7.txt', 'r') as f:
     lines = f.read().splitlines()
 
-tree_level = 0
 current_work_directory = ""
-#previous_directory = ""
-#first_level_directory = []
 file_size = 0
 directory_file_sizes = {}
-#count =0
+path = ""
+dir_count = 0
 
 for line in lines:
     if line == "$ cd ..":
-        #print(f"CWD: {previous_directory}")
-        tree_level -=1
-        print(f"Up One Level: {tree_level}")
-        if file_size <=100000:
-            directory_file_sizes[current_work_directory] = file_size
-        #print(directory_file_sizes)
-        file_size =0
-        #count +=1
+        #print(f"Leaving {path}: {directory_file_sizes[path][current_work_directory]}")
+        file_size2 = directory_file_sizes[path][current_work_directory]
+        path = path[::-1]
+        
+        for i in range(len(path)):
+            if path[i+1] == "/":
+                path = path[i+1:]
+                break
+        
+        if path == "/":
+            current_work_directory = "/"
+        else:
+            for j in range(len(path)-1):
+                if path[j+1] == "/":
+                    current_work_directory = path[1:j+1]
+                    break
+        
+        path = path[::-1]
+        current_work_directory = current_work_directory[::-1]
+        
+        directory_file_sizes[path][current_work_directory] = directory_file_sizes[path][current_work_directory] + file_size2
+
+        #print(f"Up {path}: {directory_file_sizes[path][current_work_directory]}")
+    
     elif line[:4] == "$ cd":
-        if file_size <=100000:
-            directory_file_sizes[current_work_directory] = file_size
         current_work_directory = line[5:]
-        print(f"File Size of {current_work_directory}: {file_size}")
-        print(f"CWD: {line[5:]}")
-        #previous_directory = current_work_directory
-        tree_level +=1
-        print(f"Level: {tree_level}")
-        file_size =0
+        
+        if path == "":
+            path = current_work_directory
+        else:
+            path += current_work_directory + "/"
+        
+        file_size = 0
+        dir_count = 0
+    
     elif line == "$ ls":
-        print(f"Listing: {current_work_directory}")
+        directory_file_sizes[path] = {current_work_directory: 0}
+        #print(f"Listing {path}")
+    
     elif line[:3] == "dir":
-        print(f"\tDirectory: {line[4:]}")
+        dir_count += 1
+    
     elif int(line[0]) in range(1,9):
-        print(f"\tFile: {line}")
         num = line.split()
-        file_size += int(num[0])
+        file_size = int(num[0])
+        directory_file_sizes[path][current_work_directory] = directory_file_sizes[path][current_work_directory] + file_size
 
-print("\n")
-for k,v in directory_file_sizes.items():
-    print(f"Dir: {k} - {v}")
 
-sum = 0
-for value in directory_file_sizes.values():
-    sum += value
+sum =0
+
+for k, v in directory_file_sizes.items():
+    for ke, va in v.items():
+        #print(f"Path: {k} - {va}")
+        if va <= 100000:
+            sum += va
+            print(f"Path: {k} - {va}")
+
 print(f"\nSum: {sum}")
 
 
